@@ -7,6 +7,7 @@ made on the 11th of january 2021
 
 import matplotlib.pyplot as plt  # Plotting functions
 import numpy as np # Handling numbers
+# import math as mt # math functions
 import seaborn  # for swarmplot
 
 # Path to data
@@ -17,9 +18,9 @@ P = r'd:\Users\Valentin Laplaud\PostDoc\Data\21.01.11_ObservationCorbeilles\Mesu
 
 T_list = ['1', '2', '3', '4']
 
-xGrouping = [] # Major elipse axis grouping
-Major = [] # Major elipse axis
-Minor = [] # Minor elipse axis
+xGrouping = [] # Major ellipse axis grouping
+Major = [] # Major ellipse axis
+Minor = [] # Minor ellipse axis
     
 # Loops over Thalli
 for s in T_list:
@@ -40,21 +41,25 @@ for s in T_list:
         Minor.append(float(l.split('\t')[nMin]))
         
         
-MeanAxis = [X/2 for X in [sum(x) for x in zip(Major, Minor)]]
-        
+Ecctrctsq = [1- X for X in pow(np.divide(Minor,Major),2)] # ellipse eccentricity
+
     
 plt.figure(1)
 plt.xlabel('Thallus')
 plt.ylabel('Major elipse axis length (mm)')
-seaborn.swarmplot(xGrouping,Major)
+seaborn.swarmplot(x=xGrouping,y=Major)
+plt.savefig(P + '\FigMajor.png',dpi=300)
 
 plt.figure(2)
 plt.xlabel('Thallus')
 plt.ylabel('Minor elipse axis length (mm)')
-seaborn.swarmplot(xGrouping,Minor)
-
-plt.figure(3)
-plt.xlabel('Thallus')
-plt.ylabel('Mean axis length (mm)')
-seaborn.swarmplot(xGrouping,MeanAxis)
+seaborn.swarmplot(x=xGrouping,y=Minor)
+plt.savefig(P + '\FigMinor.png',dpi=300)
     
+fig = plt.figure(3)
+plt.xlabel('Minor axis length (mm)')
+plt.ylabel('Ellipse eccentricity squared')
+seaborn.scatterplot(x=Minor,y=Ecctrctsq,hue=xGrouping)
+plt.savefig(P + '\FigEccentricity.png',dpi=300)
+
+
