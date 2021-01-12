@@ -17,48 +17,44 @@ P = r'd:\Users\Valentin Laplaud\PostDoc\Data\21.01.11_ObservationCorbeilles\Mesu
 
 T_list = ['1', '2', '3', '4']
 
-xMajor = [] # Major elipse axis grouping
-xMinor = [] # Minor elipse axis grouping
+xGrouping = [] # Major elipse axis grouping
 Major = [] # Major elipse axis
 Minor = [] # Minor elipse axis
     
+# Loops over Thalli
 for s in T_list:
     Filename = P + '\Thalle_' + s + '\FitElipseResults.txt' # Name of file to open
     F = open(Filename,'r') # Open file
     lines = F.readlines() # Read all lines of the file
 
+    # find the columns with Major and Minor axis values
+    NameVect = lines[0].split('\t') 
+    nMaj = NameVect.index("Major")
+    nMin = NameVect.index("Minor")
     
+
+    # loops over cups measurements
     for l in lines[1:]:
-        xMajor.append(s)
-        xMinor.append(s)
-        Major.append(float(l.split('\t')[1]))
-        Minor.append(float(l.split('\t')[2]))
+        xGrouping.append(s)
+        Major.append(float(l.split('\t')[nMaj]))
+        Minor.append(float(l.split('\t')[nMin]))
         
-        MeanAxis = [X/2 for X in [sum(x) for x in zip(Major, Minor)]]
+        
+MeanAxis = [X/2 for X in [sum(x) for x in zip(Major, Minor)]]
         
     
 plt.figure(1)
 plt.xlabel('Thallus')
 plt.ylabel('Major elipse axis length (mm)')
-seaborn.swarmplot(xMajor,Major)
+seaborn.swarmplot(xGrouping,Major)
 
 plt.figure(2)
 plt.xlabel('Thallus')
 plt.ylabel('Minor elipse axis length (mm)')
-seaborn.swarmplot(xMinor,Minor)
+seaborn.swarmplot(xGrouping,Minor)
 
 plt.figure(3)
 plt.xlabel('Thallus')
 plt.ylabel('Mean axis length (mm)')
-seaborn.swarmplot(xMinor,MeanAxis)
+seaborn.swarmplot(xGrouping,MeanAxis)
     
-
-
-
-
-# f=open(file,"r")
-# lines=f.readlines()
-# result=[]
-# for x in lines:
-#     result.append(x.split(' ')[1])
-# f.close()
