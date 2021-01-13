@@ -13,8 +13,6 @@ import seaborn  # for swarmplot
 # Path to data
 P = r'd:\Users\Valentin Laplaud\PostDoc\Data\21.01.11_ObservationCorbeilles\MesureCorbeilles_11012021' 
 
-
-
 # Different thalli
 
 T_list = ['1', '2', '3', '4']
