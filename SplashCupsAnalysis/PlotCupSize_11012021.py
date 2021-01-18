@@ -1,4 +1,8 @@
 """
+Created on Mon Jan 11 2021
+
+@author: Valentin Laplaud
+
 This code is a first code in python. 
 As a test it plots size of SplashCups measured in imageJ from images 
 made on the 11th of january 2021
@@ -24,7 +28,7 @@ Minor = [] # Minor ellipse axis
 # Loops over Thalli
 for s in T_list:
     Filename = P + '\Thalle_' + s + '\FitElipseResults.txt' # Name of file to open
-    F = open(Filename,'r') # Open file
+    F = open(Filename,'r') # Open file for reading
     lines = F.readlines() # Read all lines of the file
 
     # find the columns with Major and Minor axis values
