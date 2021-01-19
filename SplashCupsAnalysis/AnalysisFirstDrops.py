@@ -18,6 +18,7 @@ import numpy as np # Handling numbers
 import statistics as st # mean median and stuff
 import math as mt # math functions
 import seaborn as sb # for swarmplot
+import scipy.signal as scpsig
 
 # Path to data
 P = r'D:\Users\Valentin Laplaud\PostDoc\Data\21.01.14_PremiereGouttes\Analysis'
@@ -109,6 +110,8 @@ for s in CupsList:
         VertSpeedE = np.divide(np.diff(YposE),np.diff(TimeE))*Scale
         HorzSpeedE = np.divide(np.diff(XposE),np.diff(TimeE))*Scale
             
+        FullSpeedE = np.sqrt(np.square(VertSpeedE)+np.square(HorzSpeedE))
+        SmoothFullSpeedE = scpsig.savgol_filter(FullSpeedE, 13, 3)
         
         MeanVertSpeedE = st.mean(VertSpeedE)
         MeanHorzSpeedE = st.mean(HorzSpeedE)
@@ -128,3 +131,14 @@ for s in CupsList:
         plt.ylabel('Horizontal position (px)')
         plt.plot(TimeE,XposE,'o-')
         plt.savefig(P + '\\' + s + '-' + d +'_FigXPos_Ejection.png',dpi=300) 
+        
+        # Plotting full speed in time
+        
+        plt.figure()
+        plt.title('Ejected drop ' +d + ' speed in time')
+        plt.xlabel('Time (ms)')
+        plt.ylabel('Speed (px/ms)')
+        plt.plot(TimeEAxis,FullSpeedE,'o-')
+        plt.plot(TimeEAxis,SmoothFullSpeedE,'r-')
+        plt.savefig(P + '\\' + s + '-' + d +'_FigSpeed_Ejection.png',dpi=300) 
+        
