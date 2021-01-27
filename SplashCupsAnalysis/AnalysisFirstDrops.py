@@ -12,13 +12,11 @@ It will use image analysis done with 'Analyze Particles' in imageJ, with one tex
 per drop to analyze
 """
 
-
 import matplotlib.pyplot as plt  # Plotting functions
 import numpy as np # Handling numbers
 import statistics as st # mean median and stuff
-import math as mt # math functions
-import seaborn as sb # for swarmplot
-import scipy.signal as scpsig
+import scipy.signal as scpsig # Signal analysis 
+
 
 # Path to data
 P = r'D:\Users\Valentin Laplaud\PostDoc\Data\21.01.14_PremiereGouttes\Analysis'
