@@ -73,3 +73,55 @@ def df2boxswarm(Data,columns,**kwargs):
     fig = plt.gcf()
     fig.set_dpi(150)
     fig.suptitle(Title)
+
+# 3. Coordinate conversion from cartesian to circular (in deg) an vice versa
+
+def ToCirc(X,Y, **kwargs):
+    
+    Angle = 'rad'
+    
+    for key, value in kwargs.items(): 
+        if key == 'angle':
+            Angle = value
+        else:            
+            print('Unknown key : ' + key+ '. Kwarg ignored.')
+    
+    
+    if Angle == 'deg':
+        Alpha = np.rad2deg(np.arctan2(Y,X))
+    elif Angle == 'rad':
+        Alpha = np.arctan2(Y,X)
+    else:
+        print('Wrong angle unit : ' + Angle + '. Default to radians.')         
+        Alpha = np.arctan2(Y,X)
+        
+    Radius = np.sqrt(np.square(X)+np.square(Y))
+    
+    return(Alpha,Radius)
+
+
+
+def ToCart(Alpha,Radius, **kwargs):
+    
+    Angle = 'rad'
+    
+    for key, value in kwargs.items(): 
+        if key == 'angle':
+            Angle = value
+        else:            
+            print('Unknown key : ' + key + '. Kwarg ignored.')
+    
+    if Angle == 'deg':
+        Alpharad = np.deg2rad(Alpha)
+    elif Angle == 'rad':
+        Alpharad = Alpha
+    else:
+        print('Wrong angle unit : ' + Angle + '. Default to radians.') 
+        Alpharad = Alpha
+    
+    
+    X = Radius*np.cos(Alpharad)
+    Y = Radius*np.sin(Alpharad)
+    
+    return(X,Y)
+    
