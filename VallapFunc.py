@@ -9,7 +9,7 @@ Useful generic functions
 """
 
 
-import numpy as np
+import numpy 
 import pandas as pd
 
 import matplotlib.pyplot as plt
@@ -36,7 +36,7 @@ def LoadImageJResults(FilePath,Columns):
             data = [] # temp data storage
         
             for l in lines[1:]:
-                data = np.append(data,np.float(l.rstrip('\n').split('\t')[nC]))  
+                data = numpy.append(data,numpy.float(l.rstrip('\n').split('\t')[nC]))  
                 # adds data from the file line by line
                 # also removes '\n' from the last columns if present
 
@@ -61,11 +61,11 @@ def df2boxswarm(Data,columns,**kwargs):
     Ld = len(Data)
     Lc = len(columns)
     
-    xGrouping = np.concatenate(([0],np.concatenate(([np.ones(Ld)*x for x in range(1,Lc+1)]))))
+    xGrouping = numpy.concatenate(([0],numpy.concatenate(([numpy.ones(Ld)*x for x in range(1,Lc+1)]))))
     
     
     seaborn.swarmplot(x=xGrouping,
-                      y=np.concatenate(([10],np.concatenate(([Data[c].to_numpy() for c in columns])))))  
+                      y=numpy.concatenate(([10],numpy.concatenate(([Data[c].to_numpy() for c in columns])))))  
     plt.xticks(ticks = list(range(1,Lc+1)), labels = columns)
     Data.boxplot(columns)                                    
     
@@ -88,14 +88,14 @@ def ToCirc(X,Y, **kwargs):
     
     
     if Angle == 'deg':
-        Alpha = np.rad2deg(np.arctan2(Y,X))
+        Alpha = numpy.rad2deg(numpy.arctan2(Y,X))
     elif Angle == 'rad':
-        Alpha = np.arctan2(Y,X)
+        Alpha = numpy.arctan2(Y,X)
     else:
         print('Wrong angle unit : ' + Angle + '. Default to radians.')         
-        Alpha = np.arctan2(Y,X)
+        Alpha = numpy.arctan2(Y,X)
         
-    Radius = np.sqrt(np.square(X)+np.square(Y))
+    Radius = numpy.sqrt(numpy.square(X)+numpy.square(Y))
     
     return(Alpha,Radius)
 
@@ -112,7 +112,7 @@ def ToCart(Alpha,Radius, **kwargs):
             print('Unknown key : ' + key + '. Kwarg ignored.')
     
     if Angle == 'deg':
-        Alpharad = np.deg2rad(Alpha)
+        Alpharad = numpy.deg2rad(Alpha)
     elif Angle == 'rad':
         Alpharad = Alpha
     else:
@@ -120,8 +120,8 @@ def ToCart(Alpha,Radius, **kwargs):
         Alpharad = Alpha
     
     
-    X = Radius*np.cos(Alpharad)
-    Y = Radius*np.sin(Alpharad)
+    X = Radius*numpy.cos(Alpharad)
+    Y = Radius*numpy.sin(Alpharad)
     
     return(X,Y)
     
