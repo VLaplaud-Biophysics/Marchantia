@@ -9,8 +9,9 @@ Useful generic functions
 """
 
 
-import numpy 
+import numpy as np
 import pandas as pd
+import mpmath as mpm
 
 import matplotlib.pyplot as plt
 import seaborn
@@ -38,7 +39,7 @@ def LoadImageJResults(FilePath,Columns):
             data = [] # temp data storage
         
             for l in lines[1:]:
-                data = numpy.append(data,numpy.float(l.rstrip('\n').split('\t')[nC]))  
+                data = np.append(data,np.float(l.rstrip('\n').split('\t')[nC]))  
                 # adds data from the file line by line
                 # also removes '\n' from the last columns if present
 
@@ -63,11 +64,11 @@ def df2boxswarm(Data,columns,**kwargs):
     Ld = len(Data)
     Lc = len(columns)
     
-    xGrouping = numpy.concatenate(([0],numpy.concatenate(([numpy.ones(Ld)*x for x in range(1,Lc+1)]))))
+    xGrouping = np.concatenate(([0],np.concatenate(([np.ones(Ld)*x for x in range(1,Lc+1)]))))
     
     
     seaborn.swarmplot(x=xGrouping,
-                      y=numpy.concatenate(([10],numpy.concatenate(([Data[c].to_numpy() for c in columns])))))  
+                      y=np.concatenate(([10],np.concatenate(([Data[c].to_np() for c in columns])))))  
     plt.xticks(ticks = list(range(1,Lc+1)), labels = columns)
     Data.boxplot(columns)                                    
     
@@ -90,14 +91,14 @@ def ToCirc(X,Y, **kwargs):
     
     
     if Angle == 'deg':
-        Alpha = numpy.rad2deg(numpy.arctan2(Y,X))
+        Alpha = np.rad2deg(np.arctan2(Y,X))
     elif Angle == 'rad':
-        Alpha = numpy.arctan2(Y,X)
+        Alpha = np.arctan2(Y,X)
     else:
         print('Wrong angle unit : ' + Angle + '. Default to radians.')         
-        Alpha = numpy.arctan2(Y,X)
+        Alpha = np.arctan2(Y,X)
         
-    Radius = numpy.sqrt(numpy.square(X)+numpy.square(Y))
+    Radius = np.sqrt(np.square(X)+np.square(Y))
     
     return(Alpha,Radius)
 
@@ -114,7 +115,7 @@ def ToCart(Alpha,Radius, **kwargs):
             print('Unknown key : ' + key + '. Kwarg ignored.')
     
     if Angle == 'deg':
-        Alpharad = numpy.deg2rad(Alpha)
+        Alpharad = np.deg2rad(Alpha)
     elif Angle == 'rad':
         Alpharad = Alpha
     else:
@@ -122,12 +123,19 @@ def ToCart(Alpha,Radius, **kwargs):
         Alpharad = Alpha
     
     
-    X = Radius*numpy.cos(Alpharad)
-    Y = Radius*numpy.sin(Alpharad)
+    X = Radius*np.cos(Alpharad)
+    Y = Radius*np.sin(Alpharad)
     
     return(X,Y)
+
+# 4.1 Euclidian distance between two points in carthesian coordinates 
+def dist(x1,y1,x2,y2):
     
-# 4. Computation of Hausdorff distance (https://en.wikipedia.org/wiki/Hausdorff_distance) between two contours
+    d = np.sqrt(np.square(x1-x2)+np.square(y1-y2))
+    
+    return(d)
+
+# 4.2 Computation of Hausdorff distance (https://en.wikipedia.org/wiki/Hausdorff_distance) between two contours
     
     
 def HausdorffDist(x1,y1,x2,y2, **kwargs):
@@ -161,3 +169,41 @@ def HausdorffDist(x1,y1,x2,y2, **kwargs):
    
     return(D)
 
+# 5. Intersection volume between sphere and cylinder
+
+def interVolSC(Rs,Rc,Dsc):
+    """ ref : Boersma and Kamminga, 1961. (https://core.ac.uk/download/pdf/82412251.pdf)
+    Equation (5) with the use of mpmath for computation of the elliptic integrals. """
+    
+    # Rs sphere radius, Rc cylinder radius, Dsc distance between the two centers
+    
+    # normalization to sphere radius
+    rho = Rc/Rs
+    eta = Dsc/Rs
+    
+    """ Formula is valid if sphere and cylinder intersects """
+    if not (eta-rho) < 1:
+        raise ValueError('Invalid case ! This code''s formula is only valid for intersecting sphere and cylinders \n -> (Dsc/Rs) - (Rc/Rs) < 1 !!')
+        
+    """ Formula is valid for eta+rho >1  """    
+    if not (rho+eta) > 1 :
+        raise ValueError('Invalid parameters ! This code''s formula is only valid for (Rc/Rs) + (Dsc/Rs) > 1 !!')
+    
+    """ Heuman's lambda function """
+    def Lambda0(beta,m):      
+        """ From (https://link.springer.com/content/pdf/10.1007%2F978-3-642-65138-0.pdf) form 150.3 page 36 """
+        L = 2/np.pi*(mpm.ellipe(m)*mpm.ellipf(beta,(1-m))+mpm.ellipk(m)*mpm.ellipe(beta,(1-m))-mpm.ellipk(m)*mpm.ellipf(beta,(1-m)))
+        return(L)   
+    
+    
+    m = (1-(eta-rho)**2)/(4*rho*eta) # parameter for eliptic functions of mpmath (=k² in the paper)
+    
+    theta = np.arcsin(eta-rho)    
+    
+    V = (2/3*np.pi*(1-Lambda0(theta,m)) 
+         -8/9*np.sqrt(rho*eta)*(6*rho**2+2*rho*eta-3)*(1-m)*mpm.ellipk(m) 
+         +8/9*np.sqrt(rho*eta)*(7*rho**2+eta**2-4)*mpm.ellipe(m))
+    
+    
+    
+    return(float(V*Rs**3))
